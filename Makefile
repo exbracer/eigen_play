@@ -10,8 +10,7 @@ GPERF_LIB_LOCATION=/home/qiao/user/lib
 BUILD_DIR=objs
 
 TARGETS=
-TARGETS+= n3lp
-TARGETS+= n3lp_tc
+TARGETS+=mainTest
 
 CXXFLAGS=
 CXXFLAGS+= -O3
@@ -36,29 +35,15 @@ OBJS=$(SRCS:.cpp=.o)
 
 all: $(TARGETS)
 
-n3lp: $(BUILD_DIR) $(patsubst %,$(BUILD_DIR)/%,n3lp)
-
-$(BUILD_DIR)/%.o : %.cpp
-	$(CXX) -o $@ -c $<  $(CXXFLAGS) $(LDFLAGS)
-
-$(BUILD_DIR)/n3lp : $(patsubst %, $(BUILD_DIR)/%,$(OBJS))
-	$(CXX) -o $@ $^ $(CXXFLAGS) $(LDFLAGS)
-	mv $@ ./
-	rm -f ?*~
-
-n3lp_tc: $(BUILD_DIR) $(patsubst %, $(BUILD_DIR)/%, n3lp_tc)
+mainTest: $(BUILD_DIR) $(patsubst %, $(BUILD_DIR)/%, mainTest)
 
 $(BUILD_DIR)/tc_%.o : %.cpp
 	$(CXX) -o $@ -c $< $(CXXFLAGS) $(LDFLAGS) $(TC_LDFLAGS)
 
-$(BUILD_DIR)/n3lp_tc : $(patsubst %, $(BUILD_DIR)/tc_%, $(OBJS))
+$(BUILD_DIR)/mainTest : $(patsubst %, $(BUILD_DIR)/tc_%, $(OBJS))
 	$(CXX) -o $@ $^ $(CXXFLAGS) $(LDFLAGS) $(TC_LDFLAGS)
 	mv $@ ./
 	rm -f ?*~
-
-inputAnalysis: inputAnalysis.cpp
-	$(CXX) -o $@ $^ $(CXXFLAGS) $(LDFLAGS)
-
 clean:
 	rm -f $(BUILD_DIR)/* $(TARGETS) ?*~
 
