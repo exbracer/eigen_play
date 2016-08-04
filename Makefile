@@ -4,6 +4,7 @@
 #
 ################################
 CXX=g++
+#CXX=/home/qiao/user/bin/g++
 
 EIGEN_LOCATION=./
 GPERF_LIB_LOCATION=/home/qiao/user/lib
@@ -23,7 +24,8 @@ CXXFLAGS+= -DEIGEN_NO_DEBUG
 CXXFLAGS+= -DEIGEN_NO_STATIC_ASSERT
 CXXFLAGS+= -I $(EIGEN_LOCATION)
 CXXFLAGS+= -fopenmp
-#CXXFLAGS+= -pg
+CXXFLAGS+= -g
+
 LDFLAGS= 
 LDFLAGS+= -lm
 

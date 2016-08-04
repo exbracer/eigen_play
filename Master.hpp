@@ -19,6 +19,8 @@ public:
 	MatD Wxf, Whf; VecD bf; // for the forget gate
 	MatD Wxo, Who; VecD bo; // for the output gate
 	MatD Wxu, Whu; VecD bu; // for the memory cell
+
+	void init(Rand& rnd, const Real scale = 1.0);
 };
 
 #endif
