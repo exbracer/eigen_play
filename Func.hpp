@@ -16,13 +16,18 @@
 void forward(const VecD& xt, const State* prev, State* curr, Master* master);
 void forwardPart1(const VecD& xt, const State* prev, State* curr, Master* master);
 void forwardPart2(const VecD& xt, const State* prev, State* curr, Master* master);
-void backward(State* prev, State* curr, Grad& grad, const VecD& xt);
-void backwardPart1(State* prev, State* curr, Grad& grad, const VecD& xt);
-void backwardPart2(State* prev, State* curr, Grad& grad, const VecD& xt);
+void backward(State* prev, State* curr, Grad& grad, const VecD& xt, Master* master);
+void backwardPart1(State* prev, State* curr, Grad& grad, const VecD& xt, Master* master);
+void backwardPart2(State* prev, State* curr, Grad& grad, const VecD& xt, Master* master, int dim);
+void backwardPart3(State* prev, State* curr, Grad& grad, const VecD& xt, Master* master, int dim);
+void backwardVersion2Part1(State* prev, State* curr, Grad& grad, const VecD& xt, Master* master);
+void backwardVersion3Part1(State* prev, State* curr, Grad& grad, const VecD& xt, Master* master);
 void softmaxCalcDist(const VecD& input, VecD& output, Softmax* softmax);
 Real softmaxCalcLoss(const VecD& output, const int label);
 void softmaxBackward(const VecD& input, const VecD& output, const int label, VecD& deltaFeature, Softmax* softmax);
-
+void softmaxBackward1(const VecD& input, const VecD& output, const int label, VecD& deltaFeature, Softmax* softmax);
+void softmaxBackward2(const VecD& input, const VecD& output, const int label, VecD& deltaFeature, Softmax* softmax);
+void softmaxBackward3(const VecD& input, const VecD& output, const int label, VecD& deltaFeature, Softmax* softmax);
 
 #endif
 

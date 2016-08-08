@@ -13,7 +13,8 @@ class Grad
 {
 public:
 	Grad(){}
-	
+	Grad(const int input_dim, const int hidden_dim);
+	void init();	
 	MatD Wxi, Whi; VecD bi;
 	MatD Wxf, Whf; VecD bf;
 	MatD Wxo, Who; VecD bo;

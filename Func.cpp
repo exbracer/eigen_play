@@ -63,22 +63,184 @@ void forwardPart2(const VecD& xt, const State* prev, State* curr, Master* master
 	curr->h = curr->o.array()*curr->cTanh.array();
 }
 
-void backward(State* prev, State* curr, Grad& grad, const VecD& xt)
+void backward(State* prev, State* curr, Grad& grad, const VecD& xt, Master* master)
 {
+	VecD delo, deli, delu, delf;
+
+	curr->delc.array() += ActFunc::tanhPrime(curr->cTanh).array() * curr->delh.array() * curr->o.array();
+	prev->delc.array() += curr->delc.array() * curr->f.array();
+
+	delo = ActFunc::logisticPrime(curr->o).array() * curr->delh.array() * curr->cTanh.array();
+	deli = ActFunc::logisticPrime(curr->i).array() * curr->delc.array() * curr->u.array();
+	delf = ActFunc::logisticPrime(curr->f).array() * curr->delc.array() * prev->c.array();
+	delu = ActFunc::tanhPrime(curr->u).array() * curr->delc.array() * curr->i.array();
+
+	curr->delx.noalias() = 
+		master->Wxi.transpose() * deli + 
+		master->Wxf.transpose() * delf + 
+		master->Who.transpose() * delo + 
+		master->Wxu.transpose() * delu;
+
+	prev->delh.noalias() += 
+		master->Whi.transpose() * deli + 
+		master->Whf.transpose() * delf + 
+		master->Who.transpose() * delo + 
+		master->Whu.transpose() * delu;
+
+	grad.Wxi.noalias() += deli * xt.transpose();
+	grad.Whi.noalias() += deli * prev->h.transpose();
+
+	grad.Wxf.noalias() += delf * xt.transpose();
+	grad.Whi.noalias() += delf * prev->h.transpose();
+
+	grad.Wxo.noalias() += delo * xt.transpose();
+	grad.Who.noalias() += delo * prev->h.transpose();
+
+	grad.Wxu.noalias() += delu * xt.transpose();
+	grad.Whu.noalias() += delu * prev->h.transpose();
+
+	grad.bi += deli;
+	grad.bf += delf;
+	grad.bo += delo;
+	grad.bu += delu;
 
 	return;
 }
 
-void backwardPart1(State* prev, State* curr, Grad& grad, const VecD& xt)
+void backwardPart1(State* prev, State* curr, Grad& grad, const VecD& xt, Master* master)
 {
-
+	// std::cout << "backward part 1 start " << std::endl;
+	VecD deli, delf, delo, delu;
+	
+	curr->delc.array() += ActFunc::tanhPrime(curr->cTanh).array()*curr->delh.array()*curr->o.array();
+	// std::cout << "hahha" << std::endl;
+	prev->delc.array() += curr->delc.array()*curr->f.array();
+	// std::cout << "backward part 1 middle" << std::endl;
+	deli = ActFunc::logisticPrime(curr->i).array() * curr->delc.array() * curr->u.array();
+	// std::cout << "after deli" << std::endl;
+	delf = ActFunc::logisticPrime(curr->f).array() * curr->delc.array() * prev->c.array();
+	// std::cout << "after delf" << std::endl;
+	delo = ActFunc::logisticPrime(curr->o).array() * curr->delh.array() * curr->cTanh.array();
+	// std::cout << "after delo" << std::endl;
+	delu = ActFunc::tanhPrime(curr->u).array() * curr->delc.array() * curr->i.array();
+	// std::cout << "after delu" << std::endl;
+	return;
 }
 
-void backwardPart2(State* prev, State* curr, Grad& grad, const VecD& xt)
+void backwardPart2(State* prev, State* curr, Grad& grad, const VecD& xt, Master* master, int dim)
 {
+	VecD deli = VecD::Random(dim);
+	VecD delf = VecD::Random(dim);
+	VecD delo = VecD::Random(dim);
+	VecD delu = VecD::Random(dim);
 
+	curr->delx.noalias() = 
+		master->Wxi.transpose() * deli +
+		master->Wxf.transpose() * delf +
+		master->Wxo.transpose() * delo + 
+		master->Wxu.transpose() * delu;
+
+	curr->delh.noalias() = 
+		master->Whi.transpose() * deli +
+		master->Whf.transpose() * delf + 
+		master->Who.transpose() * delo + 
+		master->Whu.transpose() * delu;
+
+	return;
 }
 
+void backwarPart3(State* prev, State* curr, Grad& grad, const VecD& xt, Master* master, int dim)
+{
+	VecD deli = VecD::Random(dim);
+	VecD delf = VecD::Random(dim);
+	VecD delo = VecD::Random(dim);
+	VecD delu = VecD::Random(dim);
+
+	grad.Wxi.noalias() += deli * xt.transpose();
+	grad.Whi.noalias() += deli * prev->h.transpose();
+	
+	grad.Wxf.noalias() += delf * xt.transpose();
+	grad.Whf.noalias() += delf * prev->h.transpose();
+
+	grad.Wxo.noalias() += delo * xt.transpose();
+	grad.Who.noalias() += delo * prev->h.transpose();
+
+	grad.Wxu.noalias() += delu * xt.transpose();
+	grad.Whu.noalias() += delu * prev->h.transpose();
+
+	grad.bi += deli;
+	grad.bf += delf;
+	grad.bo += delo;
+	grad.bu += delu;
+
+	return;
+}
+
+void backwardVersion2Part1(State* prev, State* curr, Grad& grad, const VecD& xt, Master* master)
+{
+	// std::cout << "backward part 1 start " << std::endl;
+	VecD deli, delf, delo, delu;
+	
+	curr->delc.array() += ActFunc::tanhPrime(curr->cTanh).array()*curr->delh.array()*curr->o.array();
+	// std::cout << "hahha" << std::endl;
+	prev->delc.array() += curr->delc.array()*curr->f.array();
+	// std::cout << "backward part 1 middle" << std::endl;
+	deli = ActFunc::logisticPrime(curr->i).array() * curr->delc.array() * curr->u.array();
+	// std::cout << "after deli" << std::endl;
+	delf = ActFunc::logisticPrime(curr->f).array() * curr->delc.array() * prev->c.array();
+	// std::cout << "after delf" << std::endl;
+	delo = ActFunc::logisticPrime(curr->o).array() * curr->delh.array() * curr->cTanh.array();
+	// std::cout << "after delo" << std::endl;
+	delu = ActFunc::tanhPrime(curr->u).array() * curr->delc.array() * curr->i.array();
+	// std::cout << "after delu" << std::endl;
+
+	curr->delx.noalias() = 
+		master->Wxi.transpose() * deli +
+		master->Wxf.transpose() * delf +
+		master->Wxo.transpose() * delo + 
+		master->Wxu.transpose() * delu;
+
+	curr->delh.noalias() = 
+		master->Whi.transpose() * deli +
+		master->Whf.transpose() * delf + 
+		master->Who.transpose() * delo + 
+		master->Whu.transpose() * delu;
+}
+void backwardVersion3Part1(State* prev, State* curr, Grad& grad, const VecD& xt, Master* master)
+{
+
+	VecD deli, delf, delo, delu;
+	
+	curr->delc.array() += ActFunc::tanhPrime(curr->cTanh).array()*curr->delh.array()*curr->o.array();
+	// std::cout << "hahha" << std::endl;
+	prev->delc.array() += curr->delc.array()*curr->f.array();
+	// std::cout << "backward part 1 middle" << std::endl;
+	deli = ActFunc::logisticPrime(curr->i).array() * curr->delc.array() * curr->u.array();
+	// std::cout << "after deli" << std::endl;
+	delf = ActFunc::logisticPrime(curr->f).array() * curr->delc.array() * prev->c.array();
+	// std::cout << "after delf" << std::endl;
+	delo = ActFunc::logisticPrime(curr->o).array() * curr->delh.array() * curr->cTanh.array();
+	// std::cout << "after delo" << std::endl;
+	delu = ActFunc::tanhPrime(curr->u).array() * curr->delc.array() * curr->i.array();
+	// std::cout << "after delu" << std::endl;
+	
+	grad.Wxi.noalias() += deli * xt.transpose();
+	grad.Whi.noalias() += deli * prev->h.transpose();
+	
+	grad.Wxf.noalias() += delf * xt.transpose();
+	grad.Whf.noalias() += delf * prev->h.transpose();
+
+	grad.Wxo.noalias() += delo * xt.transpose();
+	grad.Who.noalias() += delo * prev->h.transpose();
+
+	grad.Wxu.noalias() += delu * xt.transpose();
+	grad.Whu.noalias() += delu * prev->h.transpose();
+
+	grad.bi += deli;
+	grad.bf += delf;
+	grad.bo += delo;
+	grad.bu += delu;
+}
 void softmaxCalcDist(const VecD& input, VecD& output, Softmax* softmax)
 {
 	output = softmax->bias;
@@ -98,7 +260,32 @@ void softmaxBackward(const VecD& input, const VecD& output, const int label, Vec
 	VecD delta = output;
 
 	delta.coeffRef(label, 0) -= 1.0;
+	deltaFeature = softmax->grad_weight.transpose()*delta; // hotpot 1
+	softmax->grad_weight += delta*input.transpose(); // hotpot 2
+	softmax->grad_bias += delta;
+}
+
+void softmaxBackward1(const VecD& input, const VecD& output, const int label, VecD& deltaFeature, Softmax* softmax)
+{	
+	VecD delta = output;
+	
+	delta.coeffRef(label, 0) -= 1.0;
+	//deltaFeature = softmax->grad_weight.transpose()*delta;
+	deltaFeature = (delta.transpose()*softmax->grad_weight).transpose();
+	//softmax->grad_weight += delta*input.transpose();
+	softmax->grad_bias += delta;
+}
+
+void softmaxBackward2(const VecD& input, const VecD& output, const int label, VecD& deltaFeature, Softmax* softmax)
+{
+	deltaFeature = VecD::Random(512);
+}
+
+void softmaxBackward3(const VecD& input, const VecD& output, const int label, VecD& deltaFeature, Softmax* softmax)
+{
+	VecD delta = output;
+	delta.coeffRef(label, 0) -= 1.0;
 	deltaFeature = softmax->grad_weight.transpose()*delta;
-	softmax->grad_weight += delta*input.transpose();
+
 	softmax->grad_bias += delta;
 }

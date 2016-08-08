@@ -9,7 +9,7 @@
 #include "Include.hpp"
 #include "Master.hpp"
 #include "State.hpp"
-
+#include "Grad.hpp"
 class ThreadArg
 {
 public:
@@ -32,6 +32,34 @@ public:
 
 	Master& master;
 	std::vector<State*> encStates, decStates;
+};
+
+class ThreadArg2
+{
+public:
+	ThreadArg2(Master& master_):master(master_)
+	{
+
+	};
+
+	Master& master;
+	std::vector<State*> encStates, decStates;
+	Grad src_grad, tgt_grad;
+};
+
+class ThreadArg3
+{
+public:
+	ThreadArg3(Master& master_1, Master& master_2):master_enc(master_1), master_dec(master_2)
+	{
+
+	};
+
+	Master& master_enc;
+	Master& master_dec;
+	std::vector<State*> encStates, decStates;
+	Grad src_grad, tgt_grad;
+	Softmax* softmax;
 };
 
 #endif
