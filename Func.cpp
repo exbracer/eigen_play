@@ -289,3 +289,56 @@ void softmaxBackward3(const VecD& input, const VecD& output, const int label, Ve
 
 	softmax->grad_bias += delta;
 }
+
+void softmaxBackward(const VecD& input, const VecD& output, const int label, VecD& deltaFeature, Softmax* sharedSoftmax, Softmax* privateSoftmax)
+{
+	VecD delta = output;
+	
+	delta.coeffRef(label, 0) -= 1.0;
+	deltaFeature = sharedSoftmax->grad_weight.transpose()*delta;
+	privateSoftmax->grad_weight += delta*input.transpose();
+	privateSoftmax->grad_bias += delta;
+}
+
+Real softmaxOperation(const VecD& input, VecD& output, const int label, VecD& deltaFeature, Softmax* sharedSoftmax, Softmax* privateSoftmax)
+{
+	
+	output = sharedSoftmax->bias;
+	output.noalias() += sharedSoftmax->weight*input;
+	output.array() -= output.maxCoeff();
+	output = output.array().exp();
+	output /= output.array().sum();
+	
+	//Real loss = 0.0;
+	
+	Real loss = -log(output.coeff(label, 0));
+	
+	output.coeffRef(label, 0) -= 1.0;
+	deltaFeature = sharedSoftmax->grad_weight.transpose()*output;
+	privateSoftmax->grad_weight += output*input.transpose();
+	privateSoftmax->grad_bias += output;
+	
+
+	return loss;
+}
+
+Real softmaxOperation(const VecD& input, const int label, VecD& deltaFeature, Softmax* sharedSoftmax, Softmax* privateSoftmax)
+{
+
+	VecD output = sharedSoftmax->bias;
+	output.noalias() += sharedSoftmax->weight*input;
+	output.array() -= output.maxCoeff();
+	output = output.array().exp();
+	output /= output.array().sum();
+	
+	// Real loss = 0.0;
+	
+	Real loss = -log(output.coeff(label, 0));
+	
+	output.coeffRef(label, 0) -= 1.0;
+	deltaFeature = sharedSoftmax->grad_weight.transpose()*output;
+	privateSoftmax->grad_weight += output*input.transpose();
+	privateSoftmax->grad_bias += output;
+
+	return loss;
+}

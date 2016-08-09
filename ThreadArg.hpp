@@ -62,4 +62,20 @@ public:
 	Softmax* softmax;
 };
 
+class ThreadArg4
+{
+public:
+	ThreadArg4(Master& master_1, Master& master_2):master_enc(master_1), master_dec(master_2)
+	{
+
+	};
+
+	Master& master_enc;
+	Master& master_dec;
+	std::vector<State*> encStates, decStates;
+	Grad src_grad, tgt_grad;
+	Softmax* softmax;
+	VecD target_dist;
+};
+
 #endif
