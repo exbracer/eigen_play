@@ -310,13 +310,16 @@ Real softmaxOperation(const VecD& input, VecD& output, const int label, VecD& de
 	output /= output.array().sum();
 	
 	//Real loss = 0.0;
-	
+		
 	Real loss = -log(output.coeff(label, 0));
 	
 	output.coeffRef(label, 0) -= 1.0;
-	deltaFeature = sharedSoftmax->grad_weight.transpose()*output;
-	privateSoftmax->grad_weight += output*input.transpose();
-	privateSoftmax->grad_bias += output;
+	// deltaFeature = sharedSoftmax->grad_weight.transpose()*output;
+	deltaFeature.noalias() = sharedSoftmax->grad_weight.transpose()*output;
+	// privateSoftmax->grad_weight += output*input.transpose();
+	privateSoftmax->grad_weight.noalias() += output*input.transpose();
+	//privateSoftmax->grad_bias += output;
+	privateSoftmax->grad_bias.noalias() += output;
 	
 
 	return loss;
