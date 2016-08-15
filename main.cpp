@@ -4170,16 +4170,16 @@ int main(int argc, char* argv[])
 	std::cout << "test function 30" << std::endl;
 	testFunc30(argc, argv);
 	std::cout << std::endl;
-	
+	*/
 	// for test function 31
 	std::cout << "test function 31" << std::endl;
 	testFunc31(argc, argv);
 	std::cout << std::endl;
-	*/
+	/*	
 	// for temp test function 1
 	std::cout << "temp test function 31" << std::endl;
 	tempTestFunc1(argc, argv);
 	std::cout << "end" << std::endl;
-	
+	*/
 	return 0;
 }
