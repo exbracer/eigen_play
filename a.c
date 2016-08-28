@@ -60,7 +60,7 @@ void scan(long nbytes, long niters, double * dtp, ull * dcp) {
     long i;
     asm volatile("# begin");
     for (i = 0; i < n; i++) {
-      a[i] += x;
+      a[i] *= x;
     }
     asm volatile("# end");
   }
@@ -76,6 +76,7 @@ int main(int argc, char ** argv) {
   long nbytes = atol(argv[1]);
   long niters = atol(argv[2]);
   int nth = omp_get_max_threads();
+  // int nth = atoi(argv[3]);
   printf("%d threads each scanning %ld bytes %ld times\n", 
 	 nth, nbytes, niters);
   double dt;
