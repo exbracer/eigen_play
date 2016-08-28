@@ -25,7 +25,8 @@ CXXFLAGS+= -DEIGEN_NO_STATIC_ASSERT
 CXXFLAGS+= -I $(EIGEN_LOCATION)
 CXXFLAGS+= -fopenmp
 CXXFLAGS+= -g
-
+CXXFLAGS+= -mavx
+CXXFLAGS+= -ftree-vectorizer-verbose=3
 LDFLAGS= 
 LDFLAGS+= -lm
 
@@ -44,7 +45,6 @@ $(BUILD_DIR)/tc_%.o : %.cpp
 
 $(BUILD_DIR)/mainTest : $(patsubst %, $(BUILD_DIR)/tc_%, $(OBJS))
 	$(CXX) -o $@ $^ $(CXXFLAGS) $(LDFLAGS) $(TC_LDFLAGS)
-	$(CXX) -S -o Func.S Func.cpp $(CXXFLAGS) $(LDFLAGS) $(TC_LDFLAGS)
 	mv $@ ./
 	rm -f ?*~
 clean:

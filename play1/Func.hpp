@@ -12,6 +12,10 @@
 #include "Grad.hpp"
 #include "Softmax.hpp"
 
+double curTime();
+void genRandInt(std::vector<int>& array, int len, int min, int max);
+void genRandIntDynamic(std::vector<int>& array, int len, int min, int max);
+double getMeanIntArray(std::vector<int>& array);
 
 void forward(const VecD& xt, const State* prev, State* curr, Master* master);
 void forwardPart1(const VecD& xt, const State* prev, State* curr, Master* master);
@@ -32,5 +36,7 @@ void softmaxBackward(const VecD& input, const VecD& output, const int label, Vec
 Real softmaxOperation(const VecD& input, VecD& output, const int label, VecD& deltaFeature, Softmax* sharedSoftmax, Softmax* privateSoftmax);
 Real softmaxOperation(const VecD& input, const int label, VecD& deltaFeature, Softmax* sharedSoftmax, Softmax* privateSoftmax);
 
+
+void newBackward(State* prev, State* curr, Master* master, VecD& delo, VecD& deli, VecD& delu, VecD& delf);
 #endif
 

@@ -6,7 +6,47 @@
  ************************************************************************/
 
 #include "Func.hpp"
+double curTime()
+{
+	struct timespec tp[1];
+	int r = clock_gettime(CLOCK_REALTIME, tp);
 
+	assert(r==0);
+
+	return tp->tv_sec + tp->tv_nsec * 1.0e-9;
+}
+
+void genRandInt(std::vector<int>& array, int len, int min, int max)
+{
+	srand(19920403);
+	for (int i = 0; i < len; i ++)
+	{
+		array.push_back((rand()%(max-min+1))+min);
+	}
+
+	return;
+}
+
+void genRandIntDynamic(std::vector<int>& array, int len, int min, int max)
+{
+	for (int i = 0; i < len; i ++)
+	{
+		array.push_back((rand()%(max-min+1))+min);
+	}
+
+	return;
+}
+
+double getMeanIntArray(std::vector<int>& array)
+{
+	int sum = 0;
+	for (int i = 0; i < array.size(); i ++)
+	{
+		sum += array[i];
+	}
+
+	return (double)sum/array.size();
+}
 void forward(const VecD& xt, const State* prev, State* curr, Master* master)
 {
 	// Part 1
@@ -86,26 +126,73 @@ void backward(State* prev, State* curr, Grad& grad, const VecD& xt, Master* mast
 		master->Whf.transpose() * delf + 
 		master->Who.transpose() * delo + 
 		master->Whu.transpose() * delu;
-
+	
 	grad.Wxi.noalias() += deli * xt.transpose();
+	
 	grad.Whi.noalias() += deli * prev->h.transpose();
 
 	grad.Wxf.noalias() += delf * xt.transpose();
-	grad.Whi.noalias() += delf * prev->h.transpose();
+	grad.Whf.noalias() += delf * prev->h.transpose();
 
 	grad.Wxo.noalias() += delo * xt.transpose();
 	grad.Who.noalias() += delo * prev->h.transpose();
 
 	grad.Wxu.noalias() += delu * xt.transpose();
 	grad.Whu.noalias() += delu * prev->h.transpose();
-
+	
 	grad.bi += deli;
 	grad.bf += delf;
 	grad.bo += delo;
 	grad.bu += delu;
-
+	
 	return;
 }
+
+void newBackward(State* prev, State* curr,  Master* master, VecD& delo, VecD& deli, VecD& delu, VecD& delf)
+{
+	// VecD delo, deli, delu, delf;
+
+	curr->delc.array() += ActFunc::tanhPrime(curr->cTanh).array() * curr->delh.array() * curr->o.array();
+	prev->delc.array() += curr->delc.array() * curr->f.array();
+
+	delo = ActFunc::logisticPrime(curr->o).array() * curr->delh.array() * curr->cTanh.array();
+	deli = ActFunc::logisticPrime(curr->i).array() * curr->delc.array() * curr->u.array();
+	delf = ActFunc::logisticPrime(curr->f).array() * curr->delc.array() * prev->c.array();
+	delu = ActFunc::tanhPrime(curr->u).array() * curr->delc.array() * curr->i.array();
+
+	curr->delx.noalias() = 
+		master->Wxi.transpose() * deli + 
+		master->Wxf.transpose() * delf + 
+		master->Who.transpose() * delo + 
+		master->Wxu.transpose() * delu;
+
+	prev->delh.noalias() += 
+		master->Whi.transpose() * deli + 
+		master->Whf.transpose() * delf + 
+		master->Who.transpose() * delo + 
+		master->Whu.transpose() * delu;
+/*	
+	grad.Wxi.noalias() += deli * xt.transpose();
+	
+	grad.Whi.noalias() += deli * prev->h.transpose();
+
+	grad.Wxf.noalias() += delf * xt.transpose();
+	grad.Whf.noalias() += delf * prev->h.transpose();
+
+	grad.Wxo.noalias() += delo * xt.transpose();
+	grad.Who.noalias() += delo * prev->h.transpose();
+
+	grad.Wxu.noalias() += delu * xt.transpose();
+	grad.Whu.noalias() += delu * prev->h.transpose();
+	
+	grad.bi += deli;
+	grad.bf += delf;
+	grad.bo += delo;
+	grad.bu += delu;
+	*/	
+	return;
+}
+
 
 void backwardPart1(State* prev, State* curr, Grad& grad, const VecD& xt, Master* master)
 {

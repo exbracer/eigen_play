@@ -14,6 +14,9 @@
 #include <cstring>
 #include <time.h>
 #include <assert.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <sys/mman.h>
 
 #include <vector>
 #include <map>

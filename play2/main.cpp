@@ -7,10 +7,19 @@
 
 #include "Include.hpp"
 #include "PlayEigen.hpp"
+#include "Bench.hpp"
 
 int main(int argc, char** argv)
 {
-
-
-	return;
+	// playEigen1(argc, argv);
+	
+	//bench1(argc, argv);
+	// bench2(argc, argv);
+	// bench3(argc, argv);
+	// bench4(argc, argv);
+	// bench5(argc, argv);
+	
+	bench6(argc, argv);
+	//bench7(argc, argv);	
+	return 0;
 }
