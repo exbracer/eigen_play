@@ -41,11 +41,13 @@
 #define SRC_VOC_SIZE 6812
 #define TGT_VOC_SIZE 6354
 
+#define SET_SIZE 512
+
 double playCurrTime();
 void playGenRandInt(std::vector<int>& array, int len, int min, int max);
 void playGenRandIntDynamic(std::vector<int>& array, int len, int min, int max);
 double playGetMeanIntArray(std::vector<int>& array);
-
+int playIntMax(int a, int b);
 #endif
 
 

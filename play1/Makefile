@@ -7,7 +7,7 @@ CXX=g++
 #CXX=/home/qiao/user/bin/g++
 
 EIGEN_LOCATION=../
-GPERF_LIB_LOCATION=/home/qiao/user/lib
+GPERF_LIB_LOCATION=/home/korchagin/user/lib
 BUILD_DIR=objs
 
 TARGETS=

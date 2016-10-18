@@ -49,3 +49,12 @@ double playGetMeanIntArray(std::vector<int>& array)
 
     return (double)sum/array.size();
 }
+
+int playIntMax(int a, int b)
+{
+    if (a >= b)
+    {
+        return a;
+    }
+    return b;
+}

@@ -8,10 +8,16 @@
 #include "PlayEigen.hpp"
 #include "Bench.hpp"
 #include "FetchAndAdd.hpp"
+#include "NewTestFunc.hpp"
 
 int main(int argc, char** argv)
 {
-    fetchAndAdd1(argc, argv);
-
+    // fetchAndAdd1(argc, argv);
+    std::cout << "new test function 1" << std::endl;
+    newTestFunc1(argc, argv);
+    std::cout << std::endl;
+    std::cout << "new test function 2" << std::endl;
+    newTestFunc2(argc, argv);
+    std::cout << std::endl;
 	return 0;
 }
