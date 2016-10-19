@@ -18,8 +18,8 @@ int main(int argc, char** argv)
 	testFunc32(argc, argv);
 	std::cout << std::endl;
 	
-	std::cout << "new test function 1 " << std::endl;
-	newTestFunc1(argc, argv);
+	std::cout << "test function 33 " << std::endl;
+	testFunc33(argc, argv);
 	std::cout << std::endl;
 
 	return 0;

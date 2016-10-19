@@ -16,5 +16,5 @@
 
 void newTestFunc1(int argc, char** argv);
 void newTestFunc2(int argc, char** argv);
-
+void newTestFunc3(int artc, char** argv);
 #endif

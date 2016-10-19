@@ -19,5 +19,8 @@ int main(int argc, char** argv)
     std::cout << "new test function 2" << std::endl;
     newTestFunc2(argc, argv);
     std::cout << std::endl;
+	std::cout << "new test function 3" << std::endl;
+	newTestFunc3(argc, argv);
+	std::cout << std::endl;
 	return 0;
 }
